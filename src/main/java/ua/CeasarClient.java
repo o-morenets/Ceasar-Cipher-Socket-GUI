@@ -1,3 +1,5 @@
+package ua;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -6,12 +8,12 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class CeasarClient extends JFrame {
+
     private static PrintWriter pw;
-    private String alphabet = "abcdefghijklmnopqrstuvwxyz";
 
     private static JLabel lblWelcome;
     private static JLabel lblText;
-    private static JLabel lblEncryptedTextSent;
+    private static JLabel lblStatus;
     private static JLabel lblKey;
     private JButton btnSend;
     private JButton btnClose;
@@ -39,7 +41,7 @@ public class CeasarClient extends JFrame {
         progress.setStringPainted(true);
         btnSend = new JButton("Send");
         btnSend.setMnemonic('S');
-        lblEncryptedTextSent = new JLabel("");
+        lblStatus = new JLabel("");
         btnClose = new JButton("Close");
         btnClose.setMnemonic('C');
 
@@ -51,13 +53,13 @@ public class CeasarClient extends JFrame {
         p.add(btnEncrypt);
         p.add(progress);
         p.add(btnSend);
-        p.add(lblEncryptedTextSent);
+        p.add(lblStatus);
         p.add(btnClose);
 
         add(p);
 
         btnEncrypt.addActionListener(e -> {
-            lblEncryptedTextSent.setText("");
+            lblStatus.setText("");
             encryptedText = "";
 
             int key = 0;
@@ -67,13 +69,8 @@ public class CeasarClient extends JFrame {
             }
 
             String text = fldText.getText();
-            int i = 0, j, k;
-            while (i < text.length()) {
-                j = alphabet.indexOf(text.charAt(i));
-                k = (j + key) % 26;
-                encryptedText = encryptedText + alphabet.charAt(k);
-                i++;
-            }
+            encryptedText = CipherUtils.encrypt(text, key);
+            lblStatus.setText("Encrypted: " + encryptedText);
 
 /*
             // progress bar
@@ -93,7 +90,7 @@ public class CeasarClient extends JFrame {
 
         btnSend.addActionListener(e -> {
             pw.println(encryptedText);
-            lblEncryptedTextSent.setText("Encrypted Text Sent.");
+            lblStatus.setText("Encrypted Text Sent.");
         });
 
         btnClose.addActionListener(e -> System.exit(0));
